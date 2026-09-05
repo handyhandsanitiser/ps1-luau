@@ -1,0 +1,4 @@
+# tools used to build and run the project.
+[tools]
+rojo = "rojo-rbx/rojo@7.7.0"
+lune = "lune-org/lune@0.10.5"

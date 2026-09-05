@@ -1,0 +1,41 @@
+# roblox build artifacts
+/ps1.rbxlx
+*.rbxlx.lock
+*.rbxl.lock
+sourcemap.json
+
+# local editor/env artifacts
+/.vscode/
+/.venv/
+/.venv-1/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+build/
+
+# runtime logs
+*.log
+
+# local archives
+*.zip
+
+# local bios/disc assets. do not upload these.
+/SLUS-0707.BIN
+/SLUS-0707.CUE
+/SCPH*.BIN
+/the-ultimate-playstation-1-bios/
+
+# emulator checkpoints
+/checkpoints/
+
+# generated output and analysis files
+/tools/out/
+*.id0
+*.id1
+*.nam
+*.til
+
+# agent scratch and disposable probe/perf experiments
+.freebuff/
+/tools/_*.luau

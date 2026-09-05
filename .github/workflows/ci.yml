@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned direct from release assets so the exact versions in aftman.toml
+      # are used regardless of toolchain-manager availability.
+      - name: Install toolchain (Lune 0.10.5, Rojo 7.7.0)
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -sSL -o /tmp/lune.zip https://github.com/lune-org/lune/releases/download/v0.10.5/lune-0.10.5-linux-x86_64.zip
+          curl -sSL -o /tmp/rojo.zip https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip
+          unzip -o /tmp/lune.zip -d "$HOME/.local/bin"
+          unzip -o /tmp/rojo.zip -d "$HOME/.local/bin"
+          chmod +x "$HOME/.local/bin/lune" "$HOME/.local/bin/rojo"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          lune --version
+          rojo --version
+
+      # All gates below run without external assets. The headless boot check
+      # (tools/lune_boot_ps1.luau) and checkpoint tools need a copyrighted BIOS
+      # and disc image, so they stay a manual gate; see README quick start.
+      - name: refcheck (core vs reference-model constants)
+        run: lune run tools/refcheck.luau
+      - name: cpu_diff (20 programs + 9520 fuzz instructions)
+        run: lune run tools/cpu_diff.luau
+      - name: gte_diff (15200 commands + 1141 transfers)
+        run: lune run tools/gte_diff.luau
+      - name: gpu_diff (1494 settled commands)
+        run: lune run tools/gpu_diff.luau
+      - name: rojo build (Roblox syntax gate)
+        run: rojo build -o /tmp/ps1_ci.rbxlx
